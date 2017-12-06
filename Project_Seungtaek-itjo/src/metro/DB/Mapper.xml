@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="metro.metro">
+  
+  <resultMap type="metro.dto.mDto" id="dtoMap">
+  	<result column="ID" property="id" />
+  	<result column="PASSWORD" property="password" />
+  	<result column="NAME" property="name" />
+  	<result column="NICKNAME" property="nickname" />
+  	<result column="PHONE" property="phone" />
+  	<result column="EMAIL" property="email" />
+  	<result column="ROLE" property="role" />
+  	<result column="ENABLED" property="enabled" />
+  	<result column="WRITENO" property="writeNo" />
+  	<result column="TITLE" property="title" />
+  	<result column="CONTENT" property="content" />
+  	<result column="REGDATE" property="regDate" />
+  	<result column="DELCHECK" property="delCheck" />
+  	<result column="COMMENTNO" property="commentNo" />
+  </resultMap>
+  
+   <!-- 나(회원)의 정보조회 -->
+ <select id="uSellectEnabled" parameterType="String" resultType="mDto">
+  	SELECT * FROM MUSER WHERE ID=#{id}
+ </select> 
+ 
+ <!-- 나(회원)의 정보수정 -->
+ <update id="uUpdate" parameterType="mDto">
+  	UPDATE MUSER SET PASSWORD=#{password},NICKNAME=#{nickname},PHONE=#{phone},EMAIL=#{email} WHERE ID=#{id}
+ </update>
+ 
+ <!-- 나(회원)탈퇴 -->
+ <update id="uDelUser" parameterType="String">
+ 	UPDATE MUSER SET ENABLED='N' WHERE ID=#{id}
+ </update>
+ 
+ <!-- 회원 글쓰기 -->
+ <insert id="wInsert" parameterType="mDto">
+ 	INSERT INTO MWRITE VALUES(WRITESQ.NEXTVAL,#{id},#{nickname},#{title},#{content},SYSDATE,'Y','USER')
+ </insert>
+ 
+ <!-- 회원 글수정 -->
+ <update id="wUpdate" parameterType="mDto">
+ 	UPDATE MWRITE SET TITLE=#{title},CONTENT=#{content},REGDATE=SYSDATE WHERE WRITENO=#{writeNo}
+ </update>
+  
+ <!-- 회원 글 삭제 -->
+ <update id="wDelete" parameterType="int">
+ 	UPDATE MWRITE SET DELCHECK='N' WHERE WRITENO=#{writeNo}
+ </update> 
+ 
+ <!-- 덧글쓰기 -->
+ <insert id="cInsert" parameterType="mDto">
+ 	INSERT INTO MCOMMENT VALUES(#{writeNo},#{commentNo},#{id},#{nickname},#{content},SYSDATE,'Y')
+ </insert>
+ 
+ <!-- 덧글수정 : 파라미터타입이 여러개일 경우 'map'으로 써줌. 그리고 이 타입은 Dao session에 맵핑됨-->
+ <update id="cUpdate" parameterType="map">
+ 	UPDATE MCOMMENT SET CONTENT=#{content} WHERE WRITENO=#{writeNo} AND COMMENTNO=#{commentNo}
+ </update>
+ 
+ <!-- 덧글삭제 : 파라미터타입이 여러개일 경우 'map'으로 써줌 -->
+ <update id="cDelete" parameterType="map">
+ 	UPDATE MCOMMENT SET DELCHECK='N' WHERE WRITENO=#{writeNo} AND COMMETNO=#{commentNo}
+ </update>
+  
+  <insert id="insertUser" parameterType="mDto">
+  	INSERT INTO MUSER VALUES(#{id}, #{password}, #{name}, #{nickname}, #{phone}, #{email}, 'USER', 'Y')
+  </insert>
+  
+  <select id="idChk" parameterType="String" resultType="String" >
+  	SELECT ID FROM MUSER WHERE ID=#{id}
+  </select>
+  
+  <select id="board" parameterType="map" resultMap="dtoMap">
+  	SELECT WRITENO, ID, NICKNAME, TITLE, CONTENT, REGDATE, DELCHECK, ROLE FROM (SELECT ROWNUM AS RN, WRITENO, ID, NICKNAME, TITLE, CONTENT, REGDATE, DELCHECK, ROLE FROM (SELECT * FROM MWRITE WHERE ROLE=#{role} ORDER BY WRITENO DESC)) WHERE RN BETWEEN #{start} AND #{end}
+  </select>
+  
+  <select id="allRow" parameterType="String" resultType="int">
+  	SELECT COUNT(*) FROM MWRITE WHERE ROLE=#{role}
+  </select>
+  
+  <select id="search" parameterType="map" resultMap="dtoMap">
+  	<!-- SELECT * FROM MWRITE WHERE ROLE=#{role} AND NICKNAME LIKE '%'||#{search}||'%'
+  	ORDER BY WRITENO DESC -->
+  	
+  	SELECT * FROM MWRITE WHERE ROLE=#{role}
+  	
+  	  	<choose>
+  		<when test="where.equals('NICKNAME')">
+  			AND NICKNAME LIKE '%'||#{search}||'%'
+  		</when>
+  		<when test="where.equals('TITLE')">
+  			AND TITLE LIKE '%'||#{search}||'%'
+  		</when>
+  		<otherwise>
+  			AND CONTENT LIKE '%'||#{search}||'%'
+  		</otherwise>
+  	</choose>
+  	
+  	ORDER BY WRITENO DESC
+  	
+  </select>
+  
+  <select id="writeDetail" parameterType="int" resultMap="dtoMap">
+  	SELECT * FROM MWRITE WHERE WRITENO=#{writeNo}
+  </select>
+  
+  <select id="commentDetail" parameterType="int" resultMap="dtoMap">
+  	SELECT * FROM MCOMMENT WHERE WRITENO=#{writeNo}
+  </select>
+  
+</mapper>

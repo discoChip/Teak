@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>택도없조 소개</title>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+			$("#user").hide();
+			$("#admin").hide();
+			
+	})
+	
+	function funLoad(){
+        var Cheight = $(window).height();
+        $('#menu').css({'height':Cheight+'px'});
+    }
+    window.onload = funLoad;
+    window.onresize = funLoad;
+    
+    function show(){
+    	$("#menu").show();
+    	$("#b").hide();
+    }
+    
+    function hide(){
+    	$("#menu").hide();
+    	$("#b").show();
+    }
+</script>
+<link rel="stylesheet" type="text/css" href="resources/menu.css" />
+<style type="text/css">
+	h1{
+		font-size: 50px;
+		text-indent: 250px;
+	}
+	
+	#metro, #info{
+		width: 900px;
+		margin: auto;
+	}
+	
+	#info{
+		margin-top: 20px;
+		font-size: 20px;
+		color: gray;
+		font-weight: bold;
+	}
+	
+</style>
+</head>
+<body>
+	<button onclick="show()" style="float: right" id="b" class="menuButton"><img alt="Menu" src="img/button.png"></button>
+	
+	<article>
+	<h1>서울의 아름다움을 보다 많은 사람들이</h1>
+	
+	<div id="metro">
+	<img alt="metro" src="img/metro2.jpg">
+	</div>
+	
+	<p id="info">
+	'택도없조'는 서울의 아름다움을 널리 알리고 싶어 시작하였습니다.<br>
+	오늘도 다양한 서울의 아름다움을<br>
+	학생도 노약자도 여행객도 몸이 불편한 사람도 누구나 이용하기 쉬운 지하철과 함께 찾아갑니다.<br>
+	본 사이트는 서울 시청 · 서울 메트로와 함께 합니다.<br>
+	</p>
+	</article>
+	
+	<div id="menu">
+		<p><button onclick="hide()" id="bX" class="menuButton"><img alt="×" src="img/buttonX.png"></button></p>
+		<a href="index.jsp">Index</a><br>
+		<a href="siteInfo.html">사이트 소개</a><br>
+		<a>공지사항</a><br>
+		<a>커뮤니티</a><br>
+		<p id="def"><a>로그인</a></p>
+		<p id="user"><a>내 정보</a><br><a>로그아웃</a></p>
+		<p id="admin"><a>회원 열람</a><br><a>로그아웃</a></p>
+	</div>
+	
+	<footer>
+		<a href="http://www.seoul.go.kr/main/index.html">서울시청</a>
+		<a href="http://www.seoulmetro.co.kr/">서울메트로</a>
+		<a href="">사이트맵</a>
+		Copyright © Taekdo-Eopjo. All rights reserved.
+	</footer>
+</body>
+</html>
